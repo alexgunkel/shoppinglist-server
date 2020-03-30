@@ -1,33 +1,24 @@
 #include "List.h"
-#include <utility>
-#include "App.h"
 
-List::List(ListConfig config): config{std::move(config)} {
-    uWS::App()
-    .get("/ping", [](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
-        std::cout << req->getQuery() << std::endl;
-        res->writeHeader("Content-Type", "text")->end("pong");
-    })
-    .put("/list", [this](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
-        std::cout << req->getParameter(1);
-
-        res->end(req->getParameter(0));
-    })
-    .get("/list", [this](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
-        res->end("aqwsa");
-    })
-    .listen(config.getPort(), [&config](auto *token) {
-        if (token) {
-            std::cout << "listening on "
-                << config.getScheme() << "://"
-                << config.getServer() << ":"
-                << config.getPort() << std::endl;
-        }
-    }).run();
+void List::add(const Entry &entry) {
+    auto found = shoppingList.find(entry.getTitle());
+    if (found != shoppingList.end()) {
+        found->second.addAmount(entry.getAmount());
+    } else {
+        shoppingList[entry.getTitle()] = entry;
+    }
 }
 
-std::string List::Address() const {
-    return config.getScheme() + "://" + config.getServer();
+const Entry &List::get(const std::string &name) const {
+    const auto found = shoppingList.find(name);
+
+    if (found == shoppingList.end()) {
+        throw EntryNotFound{"no entry with name " + name};
+    }
+
+    return found->second;
 }
 
-List::~List() = default;
+EntryNotFound::EntryNotFound(const std::string &msg) : runtime_error(msg){
+
+}

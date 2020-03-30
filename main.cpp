@@ -1,14 +1,14 @@
 #include <iostream>
 #include <string>
-#include "src/List.h"
+#include "src/ListServer.h"
 
 int main(int argc, char *argv[]) {
     auto port = argv[1];
-    List list{
+    ListServer list{
             {"localhost", atoi(port)}
     };
 
-    std::cout << "listen on " << list.Address() << std::endl;
+    list.run();
 
 
     std::string line;

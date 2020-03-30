@@ -5,43 +5,13 @@
 #include <utility>
 #include <map>
 
-enum class ProtocolScheme {
-    http,
-    https,
-};
-
-class ListConfig {
-private:
-    std::string server;
-    int port;
-    ProtocolScheme protocolScheme;
-
-public:
-    ListConfig(std::string serverName, int port, ProtocolScheme scheme = ProtocolScheme::http)
-        : server{std::move(serverName)}
-        , port{port}
-        , protocolScheme{scheme}
-    {};
-
-    [[nodiscard]] const std::string &getServer() const {
-        return server;
-    }
-
-    [[nodiscard]] const int &getPort() const {
-        return port;
-    }
-
-    [[nodiscard]] std::string getScheme() const {
-        return protocolScheme == ProtocolScheme::http ? "http" : "https";
-    }
-};
-
 class Entry {
-    std::string title;
+    std::string title = "";
     int amount = 1;
 public:
+    Entry() = default;
     explicit Entry(std::string t): title{std::move(t)} {};
-    explicit Entry(std::string t, int a): title{std::move(t)}, amount{a} {};
+    Entry(std::string t, int a): title{std::move(t)}, amount{a} {};
 
     [[nodiscard]] const std::string &getTitle() const {
         return title;
@@ -50,20 +20,44 @@ public:
     [[nodiscard]] int getAmount() const {
         return amount;
     };
+
+    void addAmount(int addition) {
+        amount += addition;
+    }
+
+    bool operator<(const Entry &rhs) const {
+        return title < rhs.title;
+    }
+
+    bool operator>(const Entry &rhs) const {
+        return rhs < *this;
+    }
+
+    bool operator<=(const Entry &rhs) const {
+        return !(rhs < *this);
+    }
+
+    bool operator>=(const Entry &rhs) const {
+        return !(*this < rhs);
+    }
 };
 
 class List {
 public:
-    explicit List(ListConfig config);
-    ~List();
+    List() = default;
+    ~List() = default;
 
-    [[nodiscard]] std::string Address() const;
+    void add(const Entry &entry);
+    [[nodiscard]] const Entry &get(const std::string &name) const;
 
 private:
-    ListConfig config;
-    std::map<int, Entry> shoppingList = {};
+    std::map<std::string, Entry> shoppingList = {};
 
 };
 
+class EntryNotFound : public std::runtime_error {
+public:
+    EntryNotFound(const std::string&);
+};
 
 #endif //LIST_LIST_H

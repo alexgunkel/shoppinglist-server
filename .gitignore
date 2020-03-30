@@ -13,3 +13,4 @@ build
 .idea
 cmake-build-debug
 external
+external-test
