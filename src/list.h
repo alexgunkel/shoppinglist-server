@@ -48,7 +48,9 @@ public:
     ~List() = default;
 
     void add(const Entry &entry);
+    [[nodiscard]] size_t size() const;
     [[nodiscard]] const Entry &get(const std::string &name) const;
+    [[nodiscard]] const std::map<std::string, Entry> &get() const;
 
 private:
     std::map<std::string, Entry> shoppingList = {};
@@ -57,7 +59,7 @@ private:
 
 class EntryNotFound : public std::runtime_error {
 public:
-    EntryNotFound(const std::string&);
+    explicit EntryNotFound(const std::string&);
 };
 
 #endif //LIST_LIST_H

@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
-#include "src/ListServer.h"
+#include "src/list_server.h"
 
 int main(int argc, char *argv[]) {
     auto port = argv[1];
-    ListServer list{
+    list_server list{
             {"localhost", atoi(port)}
     };
 

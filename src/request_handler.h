@@ -1,13 +1,12 @@
-#ifndef LIST_REQUESTHANDLER_H
-#define LIST_REQUESTHANDLER_H
-
+#ifndef LIST_REQUEST_HANDLER_H
+#define LIST_REQUEST_HANDLER_H
 
 #include <cpprest/http_msg.h>
-#include "List.h"
+#include "list.h"
 
 struct Route {
-    std::string entry;
     std::string list;
+    std::optional<std::string> entry;
 
     static Route fromPath(const std::string& p);
 };
@@ -21,4 +20,4 @@ public:
 };
 
 
-#endif //LIST_REQUESTHANDLER_H
+#endif //LIST_REQUEST_HANDLER_H

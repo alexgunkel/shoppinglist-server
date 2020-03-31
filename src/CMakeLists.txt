@@ -1,5 +1,7 @@
 
 find_package(cpprestsdk REQUIRED)
 
-add_library(listHandler STATIC List.h List.cpp ListServer.h ListServer.cpp RequestHandler.h RequestHandler.cpp)
+file(GLOB list_sources *.cpp)
+file(GLOB list_headers *.h)
+add_library(listHandler STATIC ${list_sources} ${list_headers})
 target_link_libraries(listHandler PUBLIC cpprestsdk::cpprest)

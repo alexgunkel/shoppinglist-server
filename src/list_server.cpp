@@ -1,7 +1,7 @@
-#include "ListServer.h"
-#include "RequestHandler.h"
+#include "list_server.h"
+#include "request_handler.h"
 
-ListServer::ListServer(const ListConfig& lConfig) {
+list_server::list_server(const ListConfig& lConfig) {
     this->listener = web::http::experimental::listener::http_listener{lConfig.getAddress()};
 
     this->listener.support(
@@ -25,7 +25,7 @@ ListServer::ListServer(const ListConfig& lConfig) {
             );
 }
 
-void ListServer::run() {
+void list_server::run() {
     std::cout << "listen on " << listener.uri().to_string() << std::endl;
     this->listener.open().wait();
 }

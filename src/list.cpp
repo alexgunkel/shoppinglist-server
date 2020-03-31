@@ -1,4 +1,4 @@
-#include "List.h"
+#include "list.h"
 
 void List::add(const Entry &entry) {
     auto found = shoppingList.find(entry.getTitle());
@@ -17,6 +17,14 @@ const Entry &List::get(const std::string &name) const {
     }
 
     return found->second;
+}
+
+size_t List::size() const {
+    return shoppingList.size();
+}
+
+const std::map<std::string, Entry> &List::get() const {
+    return shoppingList;
 }
 
 EntryNotFound::EntryNotFound(const std::string &msg) : runtime_error(msg){
