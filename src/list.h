@@ -4,42 +4,27 @@
 #include <string>
 #include <utility>
 #include <map>
+#include <algorithm>
+#include <atomic>
 
 class Entry {
     std::string title = "";
-    int amount = 1;
+    std::atomic<int> amount = 1;
 public:
-    Entry() = default;
-    explicit Entry(std::string t): title{std::move(t)} {};
-    Entry(std::string t, int a): title{std::move(t)}, amount{a} {};
+    Entry();
+    Entry(const Entry&);
 
-    [[nodiscard]] const std::string &getTitle() const {
-        return title;
-    };
+    explicit Entry(std::string t);
+    Entry(std::string t, int a);
+    Entry &operator=(const Entry&);
 
-    [[nodiscard]] int getAmount() const {
-        return amount;
-    };
+    [[nodiscard]] std::string getIdentifier() const;
 
-    void addAmount(int addition) {
-        amount += addition;
-    }
+    [[nodiscard]] const std::string &getTitle() const;
 
-    bool operator<(const Entry &rhs) const {
-        return title < rhs.title;
-    }
+    [[nodiscard]] int getAmount() const;
 
-    bool operator>(const Entry &rhs) const {
-        return rhs < *this;
-    }
-
-    bool operator<=(const Entry &rhs) const {
-        return !(rhs < *this);
-    }
-
-    bool operator>=(const Entry &rhs) const {
-        return !(*this < rhs);
-    }
+    void addAmount(int addition);
 };
 
 class List {
@@ -48,6 +33,10 @@ public:
     ~List() = default;
 
     void add(const Entry &entry);
+    void set(const Entry &entry);
+    void set(const std::string &,const Entry &entry);
+    void drop(const std::string&);
+
     [[nodiscard]] size_t size() const;
     [[nodiscard]] const Entry &get(const std::string &name) const;
     [[nodiscard]] const std::map<std::string, Entry> &get() const;

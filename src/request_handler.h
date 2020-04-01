@@ -3,6 +3,7 @@
 
 #include <cpprest/http_msg.h>
 #include "list.h"
+#include "json_decorator.h"
 
 struct Route {
     std::string list;
@@ -17,6 +18,8 @@ public:
     static void handleGet(const web::http::http_request&, List *);
     static void handlePost(const web::http::http_request&, List *);
     static void handleDelete(const web::http::http_request&, List *);
+
+    static EntryJsonDecorator extractEntry(const web::http::http_request &request);
 };
 
 

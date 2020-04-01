@@ -11,11 +11,12 @@ TEST(EntryJsonDecoratorTest, testDerivation) {
 }
 
 TEST(EntryJsonDecoratorTest, testToJson) {
-    Entry orig{"foo", 2};
+    Entry orig{"Foo", 2};
     EntryJsonDecorator decorator{orig};
 
     auto result = decorator.toJson();
-    EXPECT_EQ(web::json::value::string("foo"), result["title"]);
+    EXPECT_EQ(web::json::value::string("Foo"), result["title"]);
+    EXPECT_EQ(web::json::value::string("foo"), result["identifier"]);
     EXPECT_EQ(web::json::value::number(2), result["amount"]);
 }
 

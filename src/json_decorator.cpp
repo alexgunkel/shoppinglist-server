@@ -7,6 +7,7 @@ EntryJsonDecorator::EntryJsonDecorator(const Entry &orig): Entry{orig} {
 web::json::value EntryJsonDecorator::toJson() const {
     auto result = web::json::value::object();
     result["title"] = web::json::value::string(getTitle());
+    result["identifier"] = web::json::value::string(getIdentifier());
     result["amount"] = web::json::value::number(getAmount());
 
     return result;

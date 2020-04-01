@@ -3,15 +3,10 @@
 
 void RequestHandler::handlePost(const web::http::http_request &request, List *list) {
     try {
-        if (!request.body().is_valid()) {
-            request.reply(web::http::status_codes::BadRequest);
-            return;
-        }
-        const auto body = request.extract_json().get();
-        const auto input = EntryJsonDecorator::fromJson(body);
+        const auto input = extractEntry(request);
 
         list->add(input);
-        const auto result = EntryJsonDecorator{list->get(input.getTitle())};
+        const auto result = EntryJsonDecorator{list->get(input.getIdentifier())};
 
         request.reply(web::http::status_codes::Accepted, result.toJson());
         return;
@@ -41,11 +36,48 @@ void RequestHandler::handleGet(const web::http::http_request &request, List *lis
 }
 
 void RequestHandler::handlePut(const web::http::http_request &request, List *list) {
-    request.reply(web::http::status_codes::NotImplemented);
+    try {
+        const auto route = Route::fromPath(request.request_uri().path());
+        const auto input = extractEntry(request);
+
+        if (!route.entry.has_value()) {
+            request.reply(web::http::status_codes::BadRequest);
+            return;
+        }
+
+        list->set(route.entry.value(), input);
+
+        request.reply(web::http::status_codes::Accepted);
+        return;
+    } catch (InvalidJsonInput &invalidJsonInput) {
+        request.reply(web::http::status_codes::BadRequest);
+        return;
+    }
 }
 
 void RequestHandler::handleDelete(const web::http::http_request &request, List *list) {
-    request.reply(web::http::status_codes::NotImplemented);
+    try {
+        const auto route = Route::fromPath(request.request_uri().path());
+        if (!route.entry.has_value()) {
+            request.reply(web::http::status_codes::BadRequest);
+            return;
+        }
+
+        list->drop(route.entry.value());
+        request.reply(web::http::status_codes::Accepted);
+        return;
+    } catch (EntryNotFound &entryNotFound) {
+        request.reply(web::http::status_codes::NotFound);
+        return;
+    }
+}
+
+EntryJsonDecorator RequestHandler::extractEntry(const web::http::http_request &request) {
+    if (!request.body().is_valid()) {
+        throw InvalidJsonInput("empty body");
+    }
+
+    return EntryJsonDecorator::fromJson(request.extract_json().get());
 }
 
 Route Route::fromPath(const std::string& p) {
