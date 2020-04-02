@@ -5,6 +5,7 @@
 #include <gmock/gmock.h>
 
 class AuthenticationCheckInterfaceMock: public AuthenticationCheckInterface {
+public:
     MOCK_METHOD(bool, check, (const Base64&), (const));
 };
 

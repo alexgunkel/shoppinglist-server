@@ -17,16 +17,35 @@ TEST(RequestHandlerTest, testFailure) {
     EXPECT_THROW(Route::fromPath("/"), std::runtime_error);
 }
 
+TEST(RequestHandlerTest, testGetUnAuthorized) {
+    auto listRepo = std::make_shared<ListRepository>();
+    auto authService = std::make_unique<AuthenticationCheckInterfaceMock>();
+    ON_CALL(*authService, check).WillByDefault([](auto req) {return false;});
+    RequestHandler requestHandler{std::move(authService), listRepo};
+
+    web::http::http_request req;
+    req.set_request_uri(web::uri("http://localhost/guest"));
+    req.headers().add(requestHandler.authorizationField.get(), "test");
+
+    requestHandler.handleGet(req);
+
+    ASSERT_EQ(web::http::status_codes::Unauthorized, req.get_response().get().status_code());
+    ASSERT_FALSE(req.get_response().get().body().is_valid());
+}
+
 TEST(RequestHandlerTest, testGetAll) {
     auto listRepo = std::make_shared<ListRepository>();
     listRepo->init(User{"guest"});
     listRepo->find(User{"guest"})->add({"bar", 3});
     listRepo->find(User{"guest"})->add({"foo", 2});
+    auto authService = std::make_unique<AuthenticationCheckInterfaceMock>();
+    ON_CALL(*authService, check).WillByDefault([](auto req) {return true;});
+    RequestHandler requestHandler{std::move(authService), listRepo};
 
     web::http::http_request req;
     req.set_request_uri(web::uri("http://localhost/guest"));
+    req.headers().add(requestHandler.authorizationField.get(), "test");
 
-    RequestHandler requestHandler{std::make_unique<AuthenticationCheckInterfaceMock>(), listRepo};
 
     requestHandler.handleGet(req);
 
@@ -42,10 +61,13 @@ TEST(RequestHandlerTest, testGetAll) {
 TEST(RequestHandlerTest, testHandleGetNotFound) {
     auto listRepo = std::make_shared<ListRepository>();
     listRepo->init(User{"foo"});
-    RequestHandler requestHandler{std::make_unique<AuthenticationCheckInterfaceMock>(), listRepo};
+    auto authService = std::make_unique<AuthenticationCheckInterfaceMock>();
+    ON_CALL(*authService, check).WillByDefault([](auto req) {return true;});
+    RequestHandler requestHandler{std::move(authService), listRepo};
 
     web::http::http_request req;
     req.set_request_uri(web::uri("http://localhost/foo/bar"));
+    req.headers().add(requestHandler.authorizationField.get(), "test");
 
     EXPECT_NO_THROW(requestHandler.handleGet(req));
 
@@ -57,10 +79,13 @@ TEST(RequestHandlerTest, testHandleGetFound) {
     auto listRepo = std::make_shared<ListRepository>();
     listRepo->init(User{"foo"});
     listRepo->find(User{"foo"})->add({"bar", 1});
-    RequestHandler requestHandler{std::make_unique<AuthenticationCheckInterfaceMock>(), listRepo};
+    auto authService = std::make_unique<AuthenticationCheckInterfaceMock>();
+    ON_CALL(*authService, check).WillByDefault([](auto req) {return true;});
+    RequestHandler requestHandler{std::move(authService), listRepo};
 
     web::http::http_request req;
     req.set_request_uri(web::uri("http://localhost/foo/bar"));
+    req.headers().add(requestHandler.authorizationField.get(), "test");
 
     EXPECT_NO_THROW(requestHandler.handleGet(req));
 
@@ -72,13 +97,16 @@ TEST(RequestHandlerTest, testHandleGetFound) {
 TEST(RequestHandlerTest, testHandlePost) {
     auto listRepo = std::make_shared<ListRepository>();
     listRepo->init(User{"foo"});
-    RequestHandler requestHandler{std::make_unique<AuthenticationCheckInterfaceMock>(), listRepo};
+    auto authService = std::make_unique<AuthenticationCheckInterfaceMock>();
+    ON_CALL(*authService, check).WillByDefault([](auto req) {return true;});
+    RequestHandler requestHandler{std::move(authService), listRepo};
 
     const Entry b{"bar", 2};
 
     web::http::http_request req;
     req.set_request_uri(web::uri("http://localhost/foo/bar"));
     req.set_body(EntryJsonDecorator{b}.toJson());
+    req.headers().add(requestHandler.authorizationField.get(), "test");
 
     ASSERT_NO_THROW(requestHandler.handlePost(req));
 
@@ -90,10 +118,13 @@ TEST(RequestHandlerTest, testHandlePost) {
 TEST(RequestHandlerTest, testHandlePostWithError) {
     auto listRepo = std::make_shared<ListRepository>();
     listRepo->init(User{"foo"});
-    RequestHandler requestHandler{std::make_unique<AuthenticationCheckInterfaceMock>(), listRepo};
+    auto authService = std::make_unique<AuthenticationCheckInterfaceMock>();
+    ON_CALL(*authService, check).WillByDefault([](auto req) {return true;});
+    RequestHandler requestHandler{std::move(authService), listRepo};
 
     web::http::http_request req;
     req.set_request_uri(web::uri("http://localhost/foo/bar"));
+    req.headers().add(requestHandler.authorizationField.get(), "test");
 
     ASSERT_NO_THROW(requestHandler.handlePost(req));
 

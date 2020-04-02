@@ -5,6 +5,11 @@
 
 void RequestHandler::handlePost(const web::http::http_request &request) {
     try {
+        if (!isAuthorized(request)) {
+            request.reply(web::http::status_codes::Unauthorized);
+            return;
+        }
+
         const auto route = Route::fromPath(request.request_uri().path());
         const auto input = extractEntry(request);
 
@@ -29,6 +34,11 @@ void RequestHandler::handlePost(const web::http::http_request &request) {
 
 void RequestHandler::handleGet(const web::http::http_request &request) {
     try {
+        if (!isAuthorized(request)) {
+            request.reply(web::http::status_codes::Unauthorized);
+            return;
+        }
+
         const auto route = Route::fromPath(request.request_uri().path());
 
         if (!listRepository->has(route.user)) {
@@ -52,6 +62,11 @@ void RequestHandler::handleGet(const web::http::http_request &request) {
 
 void RequestHandler::handlePut(const web::http::http_request &request) {
     try {
+        if (!isAuthorized(request)) {
+            request.reply(web::http::status_codes::Unauthorized);
+            return;
+        }
+
         const auto route = Route::fromPath(request.request_uri().path());
 
         if (!listRepository->has(route.user)) {
@@ -79,6 +94,11 @@ void RequestHandler::handlePut(const web::http::http_request &request) {
 
 void RequestHandler::handleDelete(const web::http::http_request &request) {
     try {
+        if (!isAuthorized(request)) {
+            request.reply(web::http::status_codes::Unauthorized);
+            return;
+        }
+
         const auto route = Route::fromPath(request.request_uri().path());
         if (!listRepository->has(route.user)) {
             listRepository->init(route.user);
@@ -116,6 +136,15 @@ RequestHandler::RequestHandler(
     , listRepository{std::move(list)}
 {
     //
+}
+
+bool RequestHandler::isAuthorized(const web::http::http_request &request) const {
+    const auto authHeader = request.headers().find(authorizationField.get());
+    if (authHeader == request.headers().end()) {
+        return false;
+    }
+
+    return this->authenticator->check(Base64{authHeader->second});
 }
 
 Route Route::fromPath(const std::string& p) {

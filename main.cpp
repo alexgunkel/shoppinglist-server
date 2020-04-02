@@ -4,12 +4,12 @@
 
 int main(int argc, char *argv[]) {
     auto port = argv[1];
+    auto auths = std::make_unique<AuthenticationRepository>(std::make_unique<HashingAlgorithm>());
+    auths->addUser(User{"foo"}, Password{"bar"});
     ListServer list{
             {"localhost", atoi(port)},
             std::make_unique<RequestHandler>(
-                    std::make_unique<AuthenticationCheck>(
-                            std::make_unique<AuthenticationRepository>(std::make_unique<HashingAlgorithm>())
-                            ),
+                    std::make_unique<AuthenticationCheck>(std::move(auths)),
                     std::make_shared<ListRepository>()
                     )
     };
