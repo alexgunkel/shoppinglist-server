@@ -2,26 +2,48 @@
 #define LIST_AUTHENTICATION_CHECK_H
 
 #include "strong_types.h"
+#include <filesystem>
 #include <string>
+#include <map>
+#include <bits/unique_ptr.h>
 
-using User = Type<std::string, struct UserType>;
-using Password = Type<std::string, struct PasswordType>;
-using PasswordHash = Type<std::string, struct PasswordHashType>;
-using Base64 = Type<std::string, struct Base64Type>;
+STRONG_TYPE(User, std::string);
+STRONG_TYPE(Password, std::string);
+STRONG_TYPE(PasswordHash, std::string);
+STRONG_TYPE(Base64, std::string);
 
-class AuthenticationRepository {
+class HashingAlgorithm {
 public:
-    bool checkUser(const User &, const Password &) const;
-    bool addUser(const User &, const std::string $passwordHash);
-
-    static PasswordHash hashPassword(const Password &);
+    virtual ~HashingAlgorithm() = default;
+    [[nodiscard]] virtual PasswordHash hashPassword(const Password &) const;
+    [[nodiscard]] virtual bool checkPassword(const Password&, const PasswordHash&) const;
 };
 
-class AuthenticationCheck {
+class AuthenticationRepository {
+    std::unique_ptr<HashingAlgorithm> hasher;
+    std::map<User, PasswordHash> knownUsers;
 public:
-    explicit AuthenticationCheck(const Base64 &);
+    explicit AuthenticationRepository(std::unique_ptr<HashingAlgorithm>);
+    [[nodiscard]] bool checkUser(const User &, const Password &) const;
+    void addUser(const User &, const PasswordHash &);
+    void addUser(const User &, const Password &);
+    void readFile(const std::filesystem::path&);
+};
 
-    bool isValid() const;
+class AuthenticationCheckInterface {
+public:
+    virtual ~AuthenticationCheckInterface() = default;
+    [[nodiscard]] virtual bool check(const Base64&) const = 0;
+};
+
+class AuthenticationCheck: public AuthenticationCheckInterface {
+    std::unique_ptr<AuthenticationRepository> repo;
+public:
+    explicit AuthenticationCheck(std::unique_ptr<AuthenticationRepository>);
+    AuthenticationCheck(const AuthenticationCheck&) = delete;
+    AuthenticationCheck &operator=(const AuthenticationCheck&) = delete;
+
+    [[nodiscard]] bool check(const Base64 &) const override;
 };
 
 

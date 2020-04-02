@@ -2,22 +2,26 @@
 #define LIST_REQUEST_HANDLER_H
 
 #include <cpprest/http_msg.h>
+#include "authentication_check.h"
 #include "list.h"
 #include "json_decorator.h"
 
 struct Route {
-    std::string list;
+    User user;
     std::optional<std::string> entry;
 
     static Route fromPath(const std::string& p);
 };
 
 class RequestHandler {
+    std::unique_ptr<AuthenticationCheckInterface> authenticator;
+    std::shared_ptr<ListRepository> listRepository;
 public:
-    static void handlePut(const web::http::http_request&, List *);
-    static void handleGet(const web::http::http_request&, List *);
-    static void handlePost(const web::http::http_request&, List *);
-    static void handleDelete(const web::http::http_request&, List *);
+    explicit RequestHandler(std::unique_ptr<AuthenticationCheckInterface>, std::shared_ptr<ListRepository>);
+    void handlePut(const web::http::http_request&);
+    void handleGet(const web::http::http_request&);
+    void handlePost(const web::http::http_request&);
+    void handleDelete(const web::http::http_request&);
 
     static EntryJsonDecorator extractEntry(const web::http::http_request &request);
 };

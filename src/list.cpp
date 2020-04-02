@@ -99,3 +99,15 @@ Entry::Entry(const Entry &other) {
     amount.store(other.getAmount());
     title = other.title;
 };
+
+void ListRepository::init(const User &user) {
+    repo[user] = std::make_unique<List>();
+}
+
+List *ListRepository::find(const User &user) const {
+    return repo.at(user).get();
+}
+
+bool ListRepository::has(const User &user) const {
+    return repo.find(user) != repo.end();
+}

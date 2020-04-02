@@ -6,6 +6,7 @@
 #include <map>
 #include <algorithm>
 #include <atomic>
+#include "authentication_check.h"
 
 class Entry {
     std::string title = "";
@@ -44,6 +45,20 @@ public:
 private:
     std::map<std::string, Entry> shoppingList = {};
 
+};
+
+class ListRepository {
+    std::map<User, std::unique_ptr<List>> repo;
+public:
+    ListRepository() = default;
+    ListRepository(ListRepository&&) = default;
+
+    ListRepository(const ListRepository&) = delete;
+    ListRepository &operator=(const ListRepository&) = delete;
+
+    void init(const User &);
+    [[nodiscard]] bool has(const User &) const;
+    [[nodiscard]] List* find(const User &) const;
 };
 
 class EntryNotFound : public std::runtime_error {

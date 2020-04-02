@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "list_server.h"
+#include "ListServer.h"
 
 TEST(ServerConfigurationTest, testInstantiate) {
     ListConfig listConfig{"test", 98};

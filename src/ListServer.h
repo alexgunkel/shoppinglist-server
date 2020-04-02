@@ -1,8 +1,9 @@
-#ifndef LIST_LIST_SERVER_H
-#define LIST_LIST_SERVER_H
+#ifndef LIST_LISTSERVER_H
+#define LIST_LISTSERVER_H
 
 #include <cpprest/http_listener.h>
 #include "list.h"
+#include "request_handler.h"
 
 enum class ProtocolScheme {
     http,
@@ -39,14 +40,13 @@ public:
     }
 };
 
-class list_server {
+class ListServer {
     web::http::experimental::listener::http_listener listener;
-
-    List list;
+    std::unique_ptr<RequestHandler> requestHandler;
 public:
-    explicit list_server(const ListConfig& lConfig);
+    explicit ListServer(const ListConfig& lConfig, std::unique_ptr<RequestHandler>);
     void run();
 };
 
 
-#endif //LIST_LIST_SERVER_H
+#endif //LIST_LISTSERVER_H

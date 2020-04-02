@@ -1,11 +1,20 @@
 #include "request_handler.h"
+
+#include <utility>
 #include "json_decorator.h"
 
-void RequestHandler::handlePost(const web::http::http_request &request, List *list) {
+void RequestHandler::handlePost(const web::http::http_request &request) {
     try {
+        const auto route = Route::fromPath(request.request_uri().path());
         const auto input = extractEntry(request);
 
+        if (!listRepository->has(route.user)) {
+            listRepository->init(route.user);
+        }
+
+        const auto list = listRepository->find(route.user);
         list->add(input);
+
         const auto result = EntryJsonDecorator{list->get(input.getIdentifier())};
 
         request.reply(web::http::status_codes::Accepted, result.toJson());
@@ -18,9 +27,15 @@ void RequestHandler::handlePost(const web::http::http_request &request, List *li
     request.reply(web::http::status_codes::InternalError);
 }
 
-void RequestHandler::handleGet(const web::http::http_request &request, List *list) {
+void RequestHandler::handleGet(const web::http::http_request &request) {
     try {
         const auto route = Route::fromPath(request.request_uri().path());
+
+        if (!listRepository->has(route.user)) {
+            listRepository->init(route.user);
+        }
+
+        const auto list = listRepository->find(route.user);
 
         request.reply(
                 web::http::status_codes::OK,
@@ -35,9 +50,16 @@ void RequestHandler::handleGet(const web::http::http_request &request, List *lis
     request.reply(web::http::status_codes::InternalError);
 }
 
-void RequestHandler::handlePut(const web::http::http_request &request, List *list) {
+void RequestHandler::handlePut(const web::http::http_request &request) {
     try {
         const auto route = Route::fromPath(request.request_uri().path());
+
+        if (!listRepository->has(route.user)) {
+            listRepository->init(route.user);
+        }
+
+        const auto list = listRepository->find(route.user);
+
         const auto input = extractEntry(request);
 
         if (!route.entry.has_value()) {
@@ -55,9 +77,15 @@ void RequestHandler::handlePut(const web::http::http_request &request, List *lis
     }
 }
 
-void RequestHandler::handleDelete(const web::http::http_request &request, List *list) {
+void RequestHandler::handleDelete(const web::http::http_request &request) {
     try {
         const auto route = Route::fromPath(request.request_uri().path());
+        if (!listRepository->has(route.user)) {
+            listRepository->init(route.user);
+        }
+
+        const auto list = listRepository->find(route.user);
+
         if (!route.entry.has_value()) {
             request.reply(web::http::status_codes::BadRequest);
             return;
@@ -80,6 +108,16 @@ EntryJsonDecorator RequestHandler::extractEntry(const web::http::http_request &r
     return EntryJsonDecorator::fromJson(request.extract_json().get());
 }
 
+RequestHandler::RequestHandler(
+        std::unique_ptr<AuthenticationCheckInterface> a,
+        std::shared_ptr<ListRepository> list
+        )
+    : authenticator{std::move(a)}
+    , listRepository{std::move(list)}
+{
+    //
+}
+
 Route Route::fromPath(const std::string& p) {
     const auto path = web::uri::decode(p);
     const auto splitPath = web::uri::split_path(path);
@@ -88,5 +126,5 @@ Route Route::fromPath(const std::string& p) {
         throw std::runtime_error{"path needs to contain a list, got " + p};
     }
 
-    return {splitPath.at(0), splitPath.size() > 1 ? splitPath.at(1): std::optional<std::string>()};
+    return {User{splitPath.at(0)}, splitPath.size() > 1 ? splitPath.at(1): std::optional<std::string>()};
 }
