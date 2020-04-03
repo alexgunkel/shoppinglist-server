@@ -1,6 +1,7 @@
 #ifndef SHOPPING_LIST_SERVER_CONFIG_H
 #define SHOPPING_LIST_SERVER_CONFIG_H
 
+#include <filesystem>
 #include <string>
 #include <strong_types.h>
 
@@ -18,6 +19,7 @@ private:
     Port port;
     ProtocolScheme protocolScheme;
 
+    std::filesystem::path userFile{""};
 public:
     ServerConfig(const ServerName& serverName, Port port, ProtocolScheme scheme = ProtocolScheme::http)
     : server{serverName}
@@ -25,21 +27,17 @@ public:
     , protocolScheme{scheme}
     {};
 
-    [[nodiscard]] const ServerName &getServer() const {
-        return server;
-    }
+    [[nodiscard]] const std::filesystem::path &getUserFile() const;
 
-    [[nodiscard]] const Port &getPort() const {
-        return port;
-    }
+    void setUserFile(const std::filesystem::path &userFile);
 
-    [[nodiscard]] std::string getScheme() const {
-        return protocolScheme == ProtocolScheme::http ? "http" : "https";
-    }
+    [[nodiscard]] const ServerName &getServer() const;
 
-    [[nodiscard]] std::string getAddress() const {
-        return getScheme() + "://" + server.get() + ":" + std::to_string(port.get());
-    }
+    [[nodiscard]] const Port &getPort() const;
+
+    [[nodiscard]] ProtocolScheme getScheme() const;
+
+    [[nodiscard]] std::string getAddress() const;
 };
 
 

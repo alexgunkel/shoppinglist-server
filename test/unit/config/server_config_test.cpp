@@ -7,7 +7,7 @@ TEST(ServerConfigurationTest, testInstantiate) {
 
     EXPECT_EQ("test", serverConfig.getServer().get());
     EXPECT_EQ(98, serverConfig.getPort().get());
-    EXPECT_EQ("http", serverConfig.getScheme());
+    EXPECT_EQ(ProtocolScheme::http, serverConfig.getScheme());
 }
 
 TEST(ServerConfigurationTest, testAddress) {
