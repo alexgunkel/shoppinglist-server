@@ -14,7 +14,7 @@ configure_file(${CONFIG_HEADER_LOCATION}/defaults.h.in ${CONFIG_HEADER_LOCATION}
 
 ExternalProject_Add(strong_types_ep
         GIT_REPOSITORY https://github.com/alexgunkel/strongtypes
-        GIT_TAG v1.1
+        GIT_TAG v1.2
         GIT_PROGRESS true
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
         )
@@ -28,15 +28,18 @@ ExternalProject_Add(googletest_ep
 
 add_subdirectory(src)
 
-add_executable(shopping-list main.cpp)
-target_link_libraries(shopping-list PUBLIC listHandler)
+add_executable(shopping-list-server server.cpp)
+target_link_libraries(shopping-list-server PUBLIC listHandler)
+
+add_executable(user-ctl user_ctl.cpp)
+target_link_libraries(user-ctl PRIVATE user_ctl)
 
 install(
         DIRECTORY ${PROJECT_SOURCE_DIR}/data/
         DESTINATION ${CONFIG_LOCATION}
 )
 
-install(TARGETS shopping-list
+install(TARGETS shopping-list-server
         CONFIGURATIONS Release)
 
 enable_testing()

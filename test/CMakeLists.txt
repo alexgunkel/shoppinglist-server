@@ -31,3 +31,8 @@ add_executable(serde-test unit/unit_test_main.cpp ${serde-test-sources})
 target_link_libraries(serde-test PRIVATE serde gtest gmock pthread)
 add_dependencies(serde-test googletest_ep)
 add_test(serde-test serde-test)
+
+add_executable(user_ctl_test unit/unit_test_main.cpp unit/user_ctl_test.cpp)
+target_link_libraries(user_ctl_test PRIVATE user_ctl gtest)
+add_dependencies(user_ctl_test googletest_ep)
+add_test(user-ctl-test user_ctl_test)

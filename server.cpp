@@ -4,10 +4,8 @@
 #include "src/config/config_reader.h"
 
 int main(int argc, char *argv[]) {
-    const auto port = argv[1];
-
     const ConfigReader configReader;
-    const auto config = configReader.getServerConfig();
+    const auto& config = configReader.getServerConfig();
 
     std::cout << "users in " << configReader.getServerConfig().getUserFile() << std::endl;
     auto auths = std::make_unique<AuthenticationRepository>(std::make_unique<HashingAlgorithm>());
