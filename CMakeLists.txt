@@ -3,9 +3,14 @@ project(shopping-list)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CONFIG_LOCATION "/etc/shopping-list.d")
+set(DEFAULT_CONFIGURATION_FILE ${CONFIG_LOCATION}/default.conf)
+
 include(ExternalProject)
 set(TEST_INSTALL_LOCATION ${PROJECT_SOURCE_DIR}/external-test)
 set(EXTERNAL_INSTALL_LOCATION ${PROJECT_SOURCE_DIR}/external)
+set(CONFIG_HEADER_LOCATION ${PROJECT_SOURCE_DIR}/config)
+configure_file(${CONFIG_HEADER_LOCATION}/defaults.h.in ${CONFIG_HEADER_LOCATION}/defaults.h)
 
 ExternalProject_Add(strong_types_ep
         GIT_REPOSITORY https://github.com/alexgunkel/strongtypes
@@ -25,6 +30,11 @@ add_subdirectory(src)
 
 add_executable(shopping-list main.cpp)
 target_link_libraries(shopping-list PUBLIC listHandler)
+
+install(
+        DIRECTORY ${PROJECT_SOURCE_DIR}/data/
+        DESTINATION ${CONFIG_LOCATION}
+)
 
 install(TARGETS shopping-list
         CONFIGURATIONS Release)

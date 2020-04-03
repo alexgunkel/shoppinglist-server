@@ -3,6 +3,7 @@
 #include "config_reader.h"
 
 #include "exception.h"
+#include "defaults.h"
 
 using namespace std::filesystem;
 
@@ -24,8 +25,16 @@ ConfigReader::ConfigReader(const path &pathToConfigFile) {
         ServerName{parsed.at("servername")},
         Port{atoi(parsed.at("port").data())}
     };
+
+    if (parsed.find("users") != parsed.end()) {
+        serverConfig.setUserFile(parsed.at("users"));
+    }
 }
 
 const ServerConfig &ConfigReader::getServerConfig() const {
     return serverConfig;
+}
+
+ConfigReader::ConfigReader(): ConfigReader{DEFAULT_CONFIGURATION_FILE} {
+
 }

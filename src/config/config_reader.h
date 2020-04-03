@@ -7,6 +7,7 @@
 class ConfigReader {
     ServerConfig serverConfig{ServerName{}, Port{}};
 public:
+    ConfigReader();
     explicit ConfigReader(const std::filesystem::path &pathToConfigFile);
 
     [[nodiscard]] const ServerConfig &getServerConfig() const;

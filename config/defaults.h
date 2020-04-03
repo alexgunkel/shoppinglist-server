@@ -1,0 +1,6 @@
+#ifndef SHOPPING_LIST_DEFAULTS_H
+#define SHOPPING_LIST_DEFAULTS_H
+
+#define DEFAULT_CONFIGURATION_FILE "/etc/shopping-list.d/default.conf"
+
+#endif //SHOPPING_LIST_DEFAULTS_H

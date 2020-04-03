@@ -3,7 +3,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${TEST_INSTALL_LOCATION}/include)
 link_directories(${TEST_INSTALL_LOCATION}/lib64)
 
-set(TEST_FIXTURE_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/fixtures)
+set(TEST_FIXTURE_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/fixtures")
 configure_file(test_config.h.in ${TEST_INSTALL_LOCATION}/include/test_config.h)
 
 find_package(cpprestsdk REQUIRED)
