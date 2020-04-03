@@ -2,6 +2,7 @@
 
 #include <utility>
 #include "../serde/json_decorator.h"
+#include "../model/exception.h"
 
 void RequestHandler::handlePost(const web::http::http_request &request) {
     try {

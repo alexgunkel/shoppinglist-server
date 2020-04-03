@@ -5,29 +5,9 @@
 #include <utility>
 #include <map>
 #include <memory>
-#include <algorithm>
-#include <atomic>
 #include "user.h"
+#include "entry.h"
 
-class Entry {
-    std::string title = "";
-    std::atomic<int> amount = 1;
-public:
-    Entry();
-    Entry(const Entry&);
-
-    explicit Entry(std::string t);
-    Entry(std::string t, int a);
-    Entry &operator=(const Entry&);
-
-    [[nodiscard]] std::string getIdentifier() const;
-
-    [[nodiscard]] const std::string &getTitle() const;
-
-    [[nodiscard]] int getAmount() const;
-
-    void addAmount(int addition);
-};
 
 class List {
 public:
@@ -60,11 +40,6 @@ public:
     void init(const User &);
     [[nodiscard]] bool has(const User &) const;
     [[nodiscard]] List* find(const User &) const;
-};
-
-class EntryNotFound : public std::runtime_error {
-public:
-    explicit EntryNotFound(const std::string&);
 };
 
 #endif //LIST_LIST_H
