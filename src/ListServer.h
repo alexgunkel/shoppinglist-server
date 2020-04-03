@@ -2,8 +2,8 @@
 #define LIST_LISTSERVER_H
 
 #include <cpprest/http_listener.h>
-#include "list.h"
-#include "request_handler.h"
+#include "model/list.h"
+#include "api/request_handler.h"
 
 enum class ProtocolScheme {
     http,

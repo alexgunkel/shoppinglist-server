@@ -1,7 +1,7 @@
 #include "request_handler.h"
 
 #include <utility>
-#include "json_decorator.h"
+#include "../serde/json_decorator.h"
 
 void RequestHandler::handlePost(const web::http::http_request &request) {
     try {

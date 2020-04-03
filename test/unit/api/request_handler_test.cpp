@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include <json_decorator.h>
+#include <serde/json_decorator.h>
 
-#include "request_handler.h"
+#include "api/request_handler.h"
 
-#include "../mocks/authentication_mocks.h"
+#include "../../mocks/authentication_mocks.h"
 
 TEST(RequestHandlerTest, testEntry) {
     EXPECT_EQ("foo", Route::fromPath("/foo/bar/12").user.get());

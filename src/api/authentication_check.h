@@ -1,16 +1,11 @@
 #ifndef LIST_AUTHENTICATION_CHECK_H
 #define LIST_AUTHENTICATION_CHECK_H
 
-#include "strong_types.h"
+#include "../model/user.h"
 #include <filesystem>
 #include <string>
 #include <map>
 #include <bits/unique_ptr.h>
-
-STRONG_TYPE(User, std::string);
-STRONG_TYPE(Password, std::string);
-STRONG_TYPE(PasswordHash, std::string);
-STRONG_TYPE(Base64, std::string);
 
 class HashingAlgorithm {
 public:

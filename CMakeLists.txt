@@ -22,10 +22,12 @@ ExternalProject_Add(googletest_ep
         )
 
 add_subdirectory(src)
-add_subdirectory(test)
 
 add_executable(shopping-list main.cpp)
-target_link_libraries(shopping-list PRIVATE listHandler)
+target_link_libraries(shopping-list PUBLIC listHandler)
 
 install(TARGETS shopping-list
         CONFIGURATIONS Release)
+
+enable_testing()
+add_subdirectory(test)

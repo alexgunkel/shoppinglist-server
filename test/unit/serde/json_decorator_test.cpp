@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "json_decorator.h"
+#include "serde/json_decorator.h"
 
 TEST(EntryJsonDecoratorTest, testDerivation) {
     Entry orig{"foo", 2};

@@ -4,9 +4,10 @@
 #include <string>
 #include <utility>
 #include <map>
+#include <memory>
 #include <algorithm>
 #include <atomic>
-#include "authentication_check.h"
+#include "user.h"
 
 class Entry {
     std::string title = "";

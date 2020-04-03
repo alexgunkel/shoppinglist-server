@@ -3,8 +3,8 @@
 
 #include <cpprest/http_msg.h>
 #include "authentication_check.h"
-#include "list.h"
-#include "json_decorator.h"
+#include "../model/list.h"
+#include "../serde/json_decorator.h"
 
 STRONG_TYPE(HeaderField, std::string);
 

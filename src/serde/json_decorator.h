@@ -2,7 +2,7 @@
 #define LIST_JSON_DECORATOR_H
 
 #include <cpprest/json.h>
-#include "list.h"
+#include "../model/list.h"
 
 class JsonDecorator {
 public:
