@@ -1,14 +1,14 @@
 #include "authentication_check.h"
+#include "pbkdf_2.h"
 
 #include <cpprest/asyncrt_utils.h>
 
-// @todo: replace this dummy function by bcrypt-hashing
 PasswordHash HashingAlgorithm::hashPassword(const Password &password) const {
-    return PasswordHash(password.get());
+    return Pbkdf2{password, "salt"}.getHash();
 }
 
 bool HashingAlgorithm::checkPassword(const Password &password, const PasswordHash &passwordHash) const {
-    return password.get() == passwordHash.get();
+    return Pbkdf2{password, "salt"}.getHash() == passwordHash;
 }
 
 AuthenticationRepository::AuthenticationRepository(std::unique_ptr<HashingAlgorithm> h): hasher{std::move(h)} {
@@ -43,9 +43,7 @@ void AuthenticationRepository::readFile(const std::filesystem::path &fileName) {
     while (getline(inputs, line)) {
         colon = line.find(':');
         knownUsers[User{line.substr(0, colon)}]
-            = hasher->hashPassword(
-                    Password{line.substr(colon+1, line.size()-colon-1)}
-                    );
+            = PasswordHash{line.substr(colon+1, line.size()-colon-1)};
     }
 }
 

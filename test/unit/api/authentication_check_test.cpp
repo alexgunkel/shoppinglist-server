@@ -29,7 +29,8 @@ TEST(AuthenticationRepository, testReadfile) {
 
     std::ofstream filePtr;
     filePtr.open(file);
-    filePtr << "foo:bar\n" << "donald:duck\n" << std::endl;
+    filePtr << "foo:F27AB877EE002BAD7353436334E41AE847BE8B6F31F30CCF678BC7F1A4B9AD72\n"
+        << "donald:B1E1ABA067B3AFC362AE553CB36E2DD9F7B50F0E62A21A18406B4E8C6EAD78C5\n" << std::endl;
 
     AuthenticationRepository repository{std::make_unique<HashingAlgorithm>()};
     repository.readFile(std::string(file));
@@ -46,4 +47,11 @@ TEST(AuthenticationRepository, testReadFileFailure) {
 
     AuthenticationRepository repository{std::make_unique<HashingAlgorithm>()};
     EXPECT_ANY_THROW(repository.readFile(std::string{file}));
+}
+
+TEST(HashingAlgorithmTest, testSha) {
+    HashingAlgorithm algorithm;
+    const auto result = algorithm.hashPassword(Password{"foo"});
+
+    EXPECT_EQ("282B8395083D4E56DEC421843252560A7BC01376DFB7C1FF16C61016CDD259E3", result.get());
 }

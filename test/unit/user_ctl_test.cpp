@@ -25,5 +25,5 @@ TEST(UserCtlTest, testAddUser) {
     std::string got;
     std::getline(i, got);
 
-    EXPECT_EQ("foo:bar", got);
+    EXPECT_EQ("foo:F27AB877EE002BAD7353436334E41AE847BE8B6F31F30CCF678BC7F1A4B9AD72", got);
 }

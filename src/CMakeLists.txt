@@ -1,5 +1,6 @@
 
 find_package(cpprestsdk REQUIRED)
+find_library(cryptopp REQUIRED)
 
 file(GLOB model_sources model/*)
 add_library(model STATIC ${model_sources})
@@ -21,7 +22,7 @@ add_dependencies(config strong_types_ep)
 
 file(GLOB api_sources api/*)
 add_library(api STATIC ${api_sources})
-target_link_libraries(api PUBLIC model serde cpprestsdk::cpprest)
+target_link_libraries(api PUBLIC model serde cpprestsdk::cpprest cryptopp)
 target_compile_options(api PRIVATE -Werror -Wall -Wextra)
 add_dependencies(api serde model)
 
@@ -31,7 +32,7 @@ target_link_libraries(listHandler PUBLIC api config)
 target_compile_options(listHandler PRIVATE -Werror -Wall -Wextra)
 add_dependencies(listHandler strong_types_ep api)
 
-add_library(user_ctl STATIC user_ctl.cpp user_ctl.h)
+add_library(user_ctl STATIC user_ctl.cpp user_ctl.h exceptions.h)
 target_include_directories(user_ctl PUBLIC ${EXTERNAL_INSTALL_LOCATION}/include)
 target_link_libraries(user_ctl PUBLIC model api config)
 add_dependencies(user_ctl model)

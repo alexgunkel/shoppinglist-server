@@ -14,7 +14,6 @@ configure_file(${CONFIG_HEADER_LOCATION}/defaults.h.in ${CONFIG_HEADER_LOCATION}
 
 ExternalProject_Add(strong_types_ep
         GIT_REPOSITORY https://github.com/alexgunkel/strongtypes
-        GIT_TAG v1.2
         GIT_PROGRESS true
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
         )
@@ -40,6 +39,9 @@ install(
 )
 
 install(TARGETS shopping-list-server
+        CONFIGURATIONS Release)
+
+install(TARGETS user-ctl
         CONFIGURATIONS Release)
 
 enable_testing()
