@@ -1,6 +1,6 @@
 
 find_package(cpprestsdk REQUIRED)
-find_library(cryptopp REQUIRED)
+find_package(cryptopp REQUIRED)
 
 file(GLOB model_sources model/*)
 add_library(model STATIC ${model_sources})

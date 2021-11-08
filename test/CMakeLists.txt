@@ -6,7 +6,7 @@ link_directories(${TEST_INSTALL_LOCATION}/lib64)
 set(TEST_FIXTURE_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/fixtures")
 configure_file(test_config.h.in ${TEST_INSTALL_LOCATION}/include/test_config.h)
 
-find_package(cpprestsdk REQUIRED)
+#find_package(cpprestsdk REQUIRED)
 
 file(GLOB model-test-sources "unit/model/*")
 add_executable(model-test unit/unit_test_main.cpp ${model-test-sources})
